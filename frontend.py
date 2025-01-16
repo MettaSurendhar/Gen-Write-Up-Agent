@@ -97,7 +97,7 @@ def view_chat_history(media_type:str, history_type:str):
     for chat in chat_history:
       st.chat_message("user" if chat._role=="user" else "assistant").markdown(chat.text)
   else:
-    st.markdown("**_--- NO CHATS ---_**")
+    st.markdown("**_--- NO HISTORY LOGS ---_**")
 
   if st.button("Close"):
     st.rerun()
@@ -154,15 +154,17 @@ def confirm_history_log(generated_history: list, media_type:str, history_type:st
 ## PAGE COMPONENTS
 st.set_page_config(
     page_title="Write-Up Agent",
-    page_icon="https://api.dicebear.com/9.x/identicon/svg?seed=Felix"
+    page_icon="https://api.dicebear.com/9.x/fun-emoji/svg?seed=Emery"
 )
 
 if st.session_state.show_authentication:
   ### HEADER COMPONENTS
-  left,center,right=st.columns([2,5,2])
-  center.markdown("## ✏️ WRITE-UP AGENT")
-  st.write("")
+  left,c1,c2,right = st.columns([3,1.2,8,1],vertical_alignment="center")
+  c1.markdown("![logo](https://api.dicebear.com/9.x/fun-emoji/svg?seed=Emery)")
+  c2.markdown("# WRITE-UP AGENT")
 
+  st.write("")
+  
   ## ---- AUTHENTICATION PAGE ---- ##
 
   if st.session_state.show_sign_up:
@@ -242,8 +244,11 @@ else:
   ## ---- CHAT PAGE ---- ##
 
   ### HEADER COMPONENTS
-  st.title("Write-Up Agent")
-  st.subheader(f"AI-Powered Write-Up Assistant",divider="orange")
+  left,c1,c2,right = st.columns([3,1.2,8,1],vertical_alignment="center")
+  c1.markdown("![logo](https://api.dicebear.com/9.x/fun-emoji/svg?seed=Emery)")
+  c2.markdown("# WRITE-UP AGENT")
+  left,center,right= st.columns([2,4,1.5])
+  center.markdown(f"#### AI-Powered Write-Up Assistant")
 
   ### SIDEBAR COMPONENTS
   st.markdown(
@@ -319,7 +324,7 @@ else:
   ### USER INPUT
   inputs = list(st.session_state.post_category.items())
   with st.chat_message("user"):
-    st.markdown(f"**{st.session_state.social_selected.upper()} - {st.session_state.category_selected.upper()} INFORMATION**")
+    st.markdown(f" Enter the Information of **{st.session_state.social_selected.upper()} - {st.session_state.category_selected.upper()}**")
     key1,value1 = inputs[0]
     key2,value2 = inputs[1]
     key3,value3 = inputs[2]
@@ -338,7 +343,7 @@ else:
     
   ### WARNING
   if st.session_state.show_api_entry:
-    st.warning("Please enter the api key to generate content")
+    st.warning("Please enter the [api key](https://aistudio.google.com/) to generate content")
 
   ### DISPLAY Response
   if st.session_state.response_state:
