@@ -2,7 +2,7 @@ from haystack.dataclasses import ChatMessage, ChatRole
 from typing import List
   
 chat_history = {
-  "test02": {
+  "Metta": {
     "linkedin": {
       "event": [],
       "blog": [],

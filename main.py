@@ -5,7 +5,7 @@ from cryptography.fernet import Fernet
 import os
 
 from agents import Agent,ChatAgent
-from chat_history import get_chat_history, update_chat_history
+from chat_history import get_chat_history, update_chat_history,chat_history
 from prompt import get_prompt, writing_style_prompt, user_data_formatter_prompt, categories
 from config import agent_settings
 
@@ -67,6 +67,10 @@ def create_user(user_name:str, password: str):
     data["credentials"].append({"user_name":user_name,"password":encrypted_password})
     file.seek(0)
     json.dump(data,file,indent=2)
+
+  chat_history.update({user_name:{
+    "linkedin": {"event": [],"blog": [],"experience": [],"contribution": [],"certificate": [],"hackathon": [],"project": []},
+    "twitter": {"event": [],"blog": [],"experience": [],"contribution": [],"certificate": [],"hackathon": [],"project": []}}})
   return True,"Success"
 
 def check_user(user_name:str , password:str):
