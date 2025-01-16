@@ -203,13 +203,14 @@ with st.sidebar:
       with st.spinner("Validating"):
         valid,msg = set_api_key(st.session_state.api_key)
         if valid:
+          st.success(msg)
           st.session_state.show_api_entry = False
           st.rerun()
         else:
           st.error(msg)
 
   else:
-    if st.button("",icon=":material/hdr_auto:",type="tertiary",help="show api entry field"):
+    if st.button("",icon=":material/key:",type="tertiary",help="Show API entry field"):
       st.session_state.show_api_entry = True
       st.session_state.api_key = None
 
