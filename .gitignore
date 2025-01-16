@@ -12,6 +12,7 @@ wheels/
 
 # Environment files
 .env
+secret.key
 
 # VScode files
 .vscode/
