@@ -8,10 +8,6 @@ from dotenv import load_dotenv
 import os
 import io 
 
-load_dotenv()
-
-os.environ["GOOGLE_API_KEY"]= os.getenv("GEMINI_API_KEY")
-
 @component
 class Agent:
 
