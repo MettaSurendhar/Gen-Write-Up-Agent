@@ -62,12 +62,12 @@ def create_user(user_name:str, password: str):
     data = json.load(file)
     for user in data["credentials"]:
       if user["user_name"] == user_name:
-        return {"status": 400, "message":"User Name already exists"}
+        return False,"User Name already exists"
     encrypted_password=fernet.encrypt(password.encode()).decode()
     data["credentials"].append({"user_name":user_name,"password":encrypted_password})
     file.seek(0)
     json.dump(data,file,indent=2)
-  return {"status":200, "message":"Success"}
+  return True,"Success"
 
 def check_user(user_name:str , password:str):
   with open('credentials.json','r') as file:
@@ -76,12 +76,15 @@ def check_user(user_name:str , password:str):
       if user["user_name"] == user_name:
         decrypted_password = fernet.decrypt(user["password"].encode()).decode()
         if password == decrypted_password:
-          return {"status":200,"message":"Success"}
+          return True,"Success"
         else:
-          return {"status":400, "message":"Password didn't match"}
-  return {"status":404, message:"User doesn't exist"}
+          return False,"Password didn't match"
+  return False,"User doesn't exist"
 
-
+def get_registered_users():
+  with open('credentials.json','r') as file:
+    data = json.load(file)
+    return [user["user_name"] for user in data["credentials"]]
 # print(check_user('test02','test01password'))
 
 ## Example usage chat response generator: 
