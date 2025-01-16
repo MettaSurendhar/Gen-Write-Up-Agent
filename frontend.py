@@ -3,7 +3,7 @@ from typing import List, Dict
 
 from prompt import categories,socials
 from main import writing_style_prompt_generator,chat_response_generator
-from chat_history import update_linkedin_chat_history,get_linkedin_chat_history,get_twitter_chat_history
+from chat_history import update_chat_history,get_chat_history
 
 ### INITIALIZE SESSION STATE
 if 'response_state' not in st.session_state:
@@ -27,6 +27,8 @@ if 'social_media' not in st.session_state:
 if 'response' not in st.session_state:
   st.session_state.response=None
 
+if 'user_name' not in st.session_state:
+  st.session_state.user_name=None
 
 ### FUNCTIONS
 def generate_response_instance(data:str):
@@ -35,8 +37,8 @@ def generate_response_instance(data:str):
 def generate_clear_instance():
   st.session_state.inp1 = st.session_state.inp2 = st.session_state.inp3 = ""
 
-def generate_done_instance(history_type:str,data:str,response:str):
-  update_linkedin_chat_history(history_type,data,response)
+def generate_done_instance(media_type:str, history_type:str,data:str,response:str):
+  update_chat_history(st.session_state.user_name,media_type,history_type,data,response)
   generate_clear_instance()
   st.session_state.inp_ws = ""
 
@@ -48,16 +50,14 @@ def generate_cancel_instance():
 ### DIALOG
 @st.dialog("History Log",width="large")
 def view_chat_history(media_type, history_type:str):
-
-  chat_history = None
-  if media_type == "linkedin":
-    chat_history = get_linkedin_chat_history(history_type)
-  elif media_type == "twitter":
-    chat_history = get_twitter_chat_history(history_type)
-
+  chat_history = get_chat_history(st.session_state.user_name,media_type,history_type)
   for chat in chat_history:
     st.chat_message("user" if chat.role=="user" else "assistant").markdown(chat.content)
 
+st.set_page_config(
+    page_title="Write-Up Agent",
+    page_icon="https://api.dicebear.com/9.x/identicon/svg?seed=Felix"
+)
 
 ### HEADER COMPONENTS
 st.title("Write-Up Agent")

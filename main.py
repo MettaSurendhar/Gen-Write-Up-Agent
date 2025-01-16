@@ -2,27 +2,20 @@ from typing import Any
 
 from agents import Agent,ChatAgent
 from haystack.dataclasses import ChatMessage, ChatRole
-from chat_history import get_linkedin_chat_history, get_twitter_chat_history, update_linkedin_chat_history
+from chat_history import get_chat_history, update_chat_history
 from prompt import get_prompt, writing_style_prompt, user_data_formatter_prompt, categories
 from config import agent_settings
 
 
 ## --- Chat Response Generator --- ##
-def chat_response_generator(media_type: str, category_type: str, data: str):
+def chat_response_generator(user_name:str, media_type: str, category_type: str, data: str):
 
-  chat_history=None
-  agent_chat_history=None
-  prompt=None
-  if media_type == "linkedin":
-    chat_history = get_linkedin_chat_history(category_type)
-    agent_chat_history = [ChatMessage(content= agent_settings['agent_description'][media_type], role=ChatRole.SYSTEM,name=agent_settings['agent_name'])]
-  elif media_type == "twitter":
-    chat_history = get_twitter_chat_history(category_type)
-    agent_chat_history = [ChatMessage(content= agent_settings['agent_description'][media_type], role=ChatRole.SYSTEM,name=agent_settings['agent_name'])]
-    
+  chat_history=get_chat_history(user_name,media_type,history_type)
+  agent_chat_history=agent_chat_history = [ChatMessage(content= agent_settings['agent_description'][media_type], role=ChatRole.SYSTEM,name=agent_settings['agent_name'])] 
   prompt = get_prompt(media_type,category_type)
+
   history = agent_chat_history + chat_history
-  user_prompt= ChatMessage(content=prompt, role=ChatRole.USER, name="Metta")
+  user_prompt= ChatMessage.from_user(prompt)
   chat_agent = ChatAgent(history)
   result = chat_agent.run(data,user_prompt)
 
@@ -62,7 +55,7 @@ def chat_history_generator(media_type:str, history_type:str, data:list):
 # data = info+"/n/n"+writing_style
 # data = info
 # response = chat_response_generator("blog", data )
-# update_linkedin_chat_history("blog",data,response)
+# update_history("blog",data,response)
 # print(response)
 
 
