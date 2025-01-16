@@ -56,6 +56,16 @@ class ChatAgent:
           "template": messages
           }
       })
-    response = result["generator"]["replies"][0].content
+    response = result["generator"]["replies"][0].text
 
     return {"response":response}
+
+def set_api_key(api_key:str):
+  os.environ['GOOGLE_API_KEY'] = api_key
+  print(os.getenv("GOOGLE_API_KEY"))
+  gemini = GoogleAIGeminiGenerator(model="gemini-1.5-flash")
+  try:
+    gemini.run("hi, how are you")
+    return True, "Valid API Key"
+  except Exception as e:
+    return False, str(e.message)

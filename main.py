@@ -15,8 +15,8 @@ fernet = Fernet(key)
 ## --- Chat Response Generator --- ##
 def chat_response_generator(user_name:str, media_type: str, category_type: str, data: str):
 
-  chat_history=get_chat_history(user_name,media_type,history_type)
-  agent_chat_history=agent_chat_history = [ChatMessage(content= agent_settings['agent_description'][media_type], role=ChatRole.SYSTEM,name=agent_settings['agent_name'])] 
+  chat_history=get_chat_history(user_name,media_type,category_type)
+  agent_chat_history = [ChatMessage.from_system(agent_settings['agent_description'][media_type])] 
   prompt = get_prompt(media_type,category_type)
 
   history = agent_chat_history + chat_history
