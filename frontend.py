@@ -2,7 +2,7 @@ import streamlit as st
 from typing import List, Dict
 
 from prompt import categories,socials
-from main import response_generator,chat_response_generator
+from main import writing_style_prompt_generator,chat_response_generator
 from chat_history import update_linkedin_chat_history,get_linkedin_chat_history,get_twitter_chat_history
 
 ### INITIALIZE SESSION STATE
@@ -126,7 +126,7 @@ with st.chat_message("user"):
 if st.session_state.response_state:
   with st.chat_message("assistant"):
     with st.spinner("Writing✏️..."):
-      st.session_state.data=st.session_state.data+"/n/n"+response_generator(st.session_state.writing_style) if st.session_state.writing_style.strip() else st.session_state.data
+      st.session_state.data=st.session_state.data+"/n/n"+writing_style_prompt_generator(st.session_state.writing_style) if st.session_state.writing_style.strip() else st.session_state.data
       st.session_state.response = chat_response_generator(st.session_state.social_selected.lower(),st.session_state.category_selected.lower(),st.session_state.data)
     st.markdown(st.session_state.response)
 
