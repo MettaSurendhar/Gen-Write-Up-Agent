@@ -2,8 +2,8 @@ import streamlit as st
 from typing import List, Dict
 
 from prompt import categories,socials
-from main import writing_style_prompt_generator,chat_response_generator
-from chat_history import update_chat_history,get_chat_history
+from main import writing_style_prompt_generator,chat_response_generator,chat_history_generator
+from chat_history import update_chat_history,get_chat_history,add_chat_history
 
 ### INITIALIZE SESSION STATE
 if 'response_state' not in st.session_state:
@@ -30,6 +30,18 @@ if 'response' not in st.session_state:
 if 'user_name' not in st.session_state:
   st.session_state.user_name=None
 
+if 'api_key' not in st.session_state:
+  st.session_state.api_key=None
+
+if "text_areas" not in st.session_state:
+    st.session_state.text_areas = []
+
+if "show_add_dialog" not in st.session_state:
+    st.session_state.show_add_dialog = True
+
+if "show_confirm_dialog" not in st.session_state:
+    st.session_state.show_confirm_dialog = False
+
 ### FUNCTIONS
 def generate_response_instance(data:str):
   st.session_state.response_state = True
@@ -47,13 +59,72 @@ def generate_cancel_instance():
   st.session_state.inp_ws = ""
   st.session_state.response_state = False
 
+def add_text_area():
+  st.session_state.text_areas.append("")
+
+def remove_text_area():
+  if st.session_state.text_areas:
+    st.session_state.text_areas.pop()
+
+def open_confirm_dialog(media_type:str, history_type:str):
+  history_log_list = [text for idx, text in enumerate(st.session_state.text_areas, 1)]
+  st.session_state.text_areas=[]
+  generated_history = chat_history_generator(media_type,history_type,history_log_list)
+  st.session_state.show_add_dialog = False
+  st.session_state.show_confirm_dialog = True
+  confirm_history_log(generated_history)
+
+
 ### DIALOG
-@st.dialog("History Log",width="large")
-def view_chat_history(media_type, history_type:str):
+@st.dialog("View History Log",width="large")
+def view_chat_history(media_type:str, history_type:str):
   chat_history = get_chat_history(st.session_state.user_name,media_type,history_type)
   for chat in chat_history:
     st.chat_message("user" if chat.role=="user" else "assistant").markdown(chat.content)
 
+
+@st.dialog("Add History Log",width="large")
+def add_chat_history_log(media_type: str, history_type:str):
+  if st.session_state.show_add_dialog:
+    left,middle,right = st.columns([3.5 ,0.5,0.5])
+
+    left.markdown(f"**Add all the {media_type.capitalize()} - {history_category.capitalize()} content here** ",help="click the + / - to add/remove input fields")
+
+    if middle.button("",icon=":material/add:"):
+      add_text_area()
+    if right.button("",icon=":material/remove:"):
+      remove_text_area()
+
+    for index, area in enumerate(st.session_state.text_areas):
+      if media_type=="linkedin":
+        st.session_state.text_areas[index] = st.text_area(f"Post {index + 1}",placeholder="Enter your post content ", value=area, key=f"post_{index}")
+      elif media_type=="twitter":
+        st.session_state.text_areas[index] = st.text_area(f"Thread {index + 1}",placeholder="Enter all the tweets of your thread", value=area, key=f"thread_{index}")
+
+    if st.session_state.text_areas:
+      for value in st.session_state.text_areas:
+        if value.strip():
+          st.button("Submit",type="primary",key="enabled_text_area_submit",on_click=open_confirm_dialog,args=[media_type,history_type])
+        else:
+          st.button("Submit",type="primary",disabled=True,key="disabled_text_area_submit")
+    
+
+@st.dialog("Confirm History Log",width="large")
+def confirm_history_log(generated_history: list):
+  if st.session_state.show_confirm_dialog:
+    
+    print(generated_history)
+    for chat in generated_history:
+      st.chat_message("user" if chat._role=="user" else "assistant").markdown(chat.text)
+
+    if st.button("Done"):
+      st.session_state.show_confirm_dialog = False
+      st.session_state.text_areas=[]
+      st.session_state.show_add_dialog=True 
+      st.rerun()
+
+
+## PAGE COMPONENTS
 st.set_page_config(
     page_title="Write-Up Agent",
     page_icon="https://api.dicebear.com/9.x/identicon/svg?seed=Felix"
@@ -93,11 +164,14 @@ with st.sidebar:
 
   
   st.markdown("**HISTORY LOGS**")
+   
+  media_type = st.selectbox("media",[word.capitalize() for word in socials],label_visibility="collapsed")
+  history_category = st.selectbox("history",[word.capitalize() for word in list(categories.keys())],label_visibility="collapsed")
   left,right = st.columns(2,vertical_alignment ="bottom",gap="small")
-  history_category = right.selectbox("history",[word.capitalize() for word in list(categories.keys())],label_visibility="collapsed")
-  media_type = left.selectbox("media",[word.capitalize() for word in socials],label_visibility="collapsed")
-  if st.button("View History",use_container_width=True):
+  if right.button("View History",use_container_width=True):
     view_chat_history(media_type.lower(),history_category.lower())
+  if left.button("Add History",use_container_width=True):
+    add_chat_history_log(media_type.lower(),history_category.lower())
 
 ### CHAT 
 inputs = list(st.session_state.post_category.items())

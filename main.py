@@ -82,7 +82,7 @@ def check_user(user_name:str , password:str):
   return {"status":404, message:"User doesn't exist"}
 
 
-print(check_user('test02','test01password'))
+# print(check_user('test02','test01password'))
 
 ## Example usage chat response generator: 
 # info=" Blog Information: /n Blog Title: From Newbie to Web Developer /n Blog: Starting out in web development can feel a bit like navigating a maze with no map. In my latest blog post, I share how I went from a complete newbie to building my own websites. I talk about the struggles I faced, the resources that helped me, and some tips that might make your path a bit smoother. /n Blog Link: Metta’s Tech Bytes 🚀." 

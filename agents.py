@@ -24,7 +24,7 @@ class Agent:
     self.pipeline.connect("prompt_builder", "generator")
 
   @component.output_types(response=dict[str, Any])
-  def run(self, data: str):
+  def run(self, data):
     result = self.pipeline.run({  
         "prompt_builder": {"data": data}
       })

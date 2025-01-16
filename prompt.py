@@ -422,15 +422,15 @@ prompts=[
 writing_style_prompt = "You are a prompt generator,only based on the user-provided preferences generate prompt for  writing style guideline of linkedin posts. Key Points: /n Write the prompt in 1/2/3  no titles and clear points, based on the given no of keywords in user preference. /n Include user preferences on emojis, explicitly addressing their use or avoidance. /n Present all points clearly under the heading 'User Writing Style Guidelines'. /n Do not include anything other than the user-provided preferences./n Avoid mentioning LinkedIn or specific platforms; focus solely on the guidelines. /n /nUser Preference:/n{{data}}"
 
 user_data_formatter_prompt = """
-You are a user data formatter. Extract the data strictly in the format provided below and ensure no extra information is included.
+You are a user data formatter. Extract the data strictly in the category provided below as a plain string. Do not include any formatting like JSON, code blocks, or any extra symbols.
 
-Format:
+Category:
 {{data.format}}
 
 Content:
 {{data.content}}
 
-Ensure accuracy and adhere to the format precisely.
+Ensure the response is accurate, contains only the extracted information in plain text, and adheres strictly to the provided category format.
 """
 
 def get_prompt(media_type:str, category:str):
