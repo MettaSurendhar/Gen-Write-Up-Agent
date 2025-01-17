@@ -16,7 +16,11 @@ cookie_controller = CookieController(key=os.getenv("COOKIE_KEY"))
 st.set_page_config(
     page_title="Write-Up Agent",
     page_icon="https://api.dicebear.com/9.x/fun-emoji/svg?seed=Emery",
-    initial_sidebar_state="collapsed"
+    menu_items={
+      "Get help":"mailto:msurendhar8815@gmail.com",
+      "Report a Bug": "https://github.com/MettaSurendhar/Gen-Write-Up-Agent/issues",
+      "About": "https://github.com/MettaSurendhar/Gen-Write-Up-Agent"
+    }
 )
 
 if f"{cookie_name}_logged_in" in list(cookie_controller.getAll().keys()):
