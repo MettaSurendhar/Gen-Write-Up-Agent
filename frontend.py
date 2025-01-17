@@ -1,4 +1,15 @@
 import streamlit as st
+
+st.set_page_config(
+    page_title="Write-Up Agent",
+    page_icon="https://api.dicebear.com/9.x/fun-emoji/svg?seed=Emery",
+    menu_items={
+      "Get help":"mailto:msurendhar8815@gmail.com",
+      "Report a Bug": "https://github.com/MettaSurendhar/Gen-Write-Up-Agent/issues",
+      "About": "https://github.com/MettaSurendhar/Gen-Write-Up-Agent"
+    }
+)
+
 from typing import List, Dict
 from streamlit_cookies_controller import CookieController
 import os
@@ -13,15 +24,6 @@ cookie_name = os.getenv("COOKIE_NAME")
 cookie_controller = CookieController(key=os.getenv("COOKIE_KEY"))
 
 ## PAGE COMPONENTS
-st.set_page_config(
-    page_title="Write-Up Agent",
-    page_icon="https://api.dicebear.com/9.x/fun-emoji/svg?seed=Emery",
-    menu_items={
-      "Get help":"mailto:msurendhar8815@gmail.com",
-      "Report a Bug": "https://github.com/MettaSurendhar/Gen-Write-Up-Agent/issues",
-      "About": "https://github.com/MettaSurendhar/Gen-Write-Up-Agent"
-    }
-)
 
 if f"{cookie_name}_logged_in" in list(cookie_controller.getAll().keys()):
   if cookie_controller.get(f"{cookie_name}_logged_in")=="True":
