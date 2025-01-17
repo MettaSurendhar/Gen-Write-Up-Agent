@@ -1,10 +1,27 @@
 import streamlit as st
 from typing import List, Dict
+from streamlit_cookies_controller import CookieController
+import os
+import time
 
 from prompt import categories,socials
 from main import writing_style_prompt_generator,chat_response_generator,chat_history_generator,create_user,check_user,get_registered_users
 from chat_history import update_chat_history,get_chat_history,add_chat_history
 from agents import set_api_key
+
+cookie_name = os.getenv("COOKIE_NAME")
+cookie_controller = CookieController(key=os.getenv("COOKIE_KEY"))
+
+## PAGE COMPONENTS
+st.set_page_config(
+    page_title="Write-Up Agent",
+    page_icon="https://api.dicebear.com/9.x/fun-emoji/svg?seed=Emery",
+    initial_sidebar_state="collapsed"
+)
+
+if f"{cookie_name}_logged_in" in list(cookie_controller.getAll().keys()):
+  if cookie_controller.get(f"{cookie_name}_logged_in")=="True":
+    st.session_state.show_authentication=False
 
 ## INITIALIZE SESSION STATE
 if 'response_state' not in st.session_state:
@@ -13,7 +30,7 @@ if 'response_state' not in st.session_state:
 if 'category_selected' not in st.session_state:
   st.session_state.category_selected = None
 
-if 'writing_style' not in st.session_state:
+if 'writing_style' not in st.session_state: 
   st.session_state.writing_style = ""
 
 if 'data' not in st.session_state:
@@ -29,7 +46,7 @@ if 'response' not in st.session_state:
   st.session_state.response=None
 
 if 'user_name' not in st.session_state:
-  st.session_state.user_name="test02"
+  st.session_state.user_name=None
 
 if 'api_key' not in st.session_state:
   st.session_state.api_key=None
@@ -150,14 +167,10 @@ def confirm_history_log(generated_history: list, media_type:str, history_type:st
       st.session_state.show_add_dialog=True 
       st.rerun()
 
-
-## PAGE COMPONENTS
-st.set_page_config(
-    page_title="Write-Up Agent",
-    page_icon="https://api.dicebear.com/9.x/fun-emoji/svg?seed=Emery"
-)
-
 if st.session_state.show_authentication:
+
+  ## ---- AUTHENTICATION PAGE ---- ##
+
   ### HEADER COMPONENTS
   left,c1,c2,right = st.columns([3,1.2,8,1],vertical_alignment="center")
   c1.markdown("![logo](https://api.dicebear.com/9.x/fun-emoji/svg?seed=Emery)")
@@ -165,7 +178,8 @@ if st.session_state.show_authentication:
 
   st.write("")
   
-  ## ---- AUTHENTICATION PAGE ---- ##
+  login_fragment = st.empty()
+  ### SIGN UP COMPONENTS
 
   if st.session_state.show_sign_up:
     with st.form("sign_up",clear_on_submit=True, enter_to_submit=False):
@@ -188,9 +202,12 @@ if st.session_state.show_authentication:
             if not status:
               st.error(msg)
             else:
-              st.success("Successfully Registered 🎉")
               st.session_state.user_name = user_name
+              cookie_controller.set(f"{cookie_name}_logged_in","True")
+              st.success("Successfully Registered 🎉")
+              login_fragment.balloons()
               st.session_state.show_authentication=False
+              time.sleep(2)
               st.rerun()
         else:
           st.error("Please fill all the fields")
@@ -202,6 +219,8 @@ if st.session_state.show_authentication:
       st.session_state.show_sign_up=False
       st.session_state.show_log_in=True
       st.rerun()
+
+  ### LOG IN COMPONENTS
 
   if st.session_state.show_log_in:
     with st.form("log_in",clear_on_submit=True, enter_to_submit=False):
@@ -224,11 +243,14 @@ if st.session_state.show_authentication:
             if not status:
               st.error(msg)
             else:
-              st.success("Successfully Logged In")
               st.session_state.user_name = user_name
+              cookie_controller.set(f"{cookie_name}_logged_in","True")
+              st.success("Successfully Logged In")
+              login_fragment.balloons()
               st.session_state.show_authentication=False
+              time.sleep(2)
               st.rerun()
-        else:
+        else: 
           st.error("Please fill all the fields")
 
     left,c1,c2,right = st.columns([3.5,2,1,3.8],vertical_alignment="center")
@@ -244,11 +266,11 @@ else:
   ## ---- CHAT PAGE ---- ##
 
   ### HEADER COMPONENTS
-  left,c1,c2,right = st.columns([3,1.2,8,1],vertical_alignment="center")
+  left,c1,c2,right = st.columns([3,1.5,8,1],vertical_alignment="center")
   c1.markdown("![logo](https://api.dicebear.com/9.x/fun-emoji/svg?seed=Emery)")
-  c2.markdown("# WRITE-UP AGENT")
-  left,center,right= st.columns([2,4,1.5])
-  center.markdown(f"#### AI-Powered Write-Up Assistant")
+  c2.markdown("# WRITE-UP AGENT \n #### AI-Powered Write-Up Assistant")
+  left,center,right= st.columns([2,1.5,1.5])
+  center.markdown(f"")
 
   ### SIDEBAR COMPONENTS
   st.markdown(
@@ -263,6 +285,8 @@ else:
       """,
       unsafe_allow_html=True,
   )
+
+  logout_fragment = st.empty()
 
   ### SIDEBAR
   with st.sidebar:
@@ -319,7 +343,12 @@ else:
       st.session_state.show_authentication=True
       st.session_state.user_name=None
       st.session_state.api_key=None
+      cookie_controller.set(f"{cookie_name}_logged_in","False")
+      logout_fragment.success("Successfully Logged Out")
+      logout_fragment.balloons()
+      time.sleep(2)
       st.rerun()
+      
 
   ### USER INPUT
   inputs = list(st.session_state.post_category.items())

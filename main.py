@@ -3,6 +3,8 @@ import json
 from haystack.dataclasses import ChatMessage, ChatRole
 from cryptography.fernet import Fernet
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
 from agents import Agent,ChatAgent
 from chat_history import get_chat_history, update_chat_history,chat_history
