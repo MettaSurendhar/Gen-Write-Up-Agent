@@ -1,4 +1,4 @@
-# Write-Up Agent
+# Gen-Write-Up Agent
 ### AI-Powered Write-Up Assistant
 ##### Supports - Linked In & Twitter
 ###### Version dev-0.1.5
