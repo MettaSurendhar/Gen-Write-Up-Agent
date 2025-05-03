@@ -1,11 +1,12 @@
-# Gen Write-Up Agent
-
+# Write-Up Agent
 ### AI-Powered Write-Up Assistant
-
 ##### Supports - Linked In & Twitter
-
-###### Version dev-0.2.0
-
+###### Version dev-0.1.5
 ---
 
-##### Live Link [live](https://mettasurendhar-gen-write-up-agent-frontend-a2or5o.streamlit.app)
+### Screen Shots:
+
+![Main_page](images/sc01.png)  
+![Work_page](images/sc02.png)
+![Response_page](images/sc03.png)
+![History_page](images/sc04.png)
